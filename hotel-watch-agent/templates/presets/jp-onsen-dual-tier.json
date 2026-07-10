@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "slug": "jp-onsen-dual-tier",
+    "maxHotels": 10,
+    "note": "日本温泉双层监控预设：A 公共温泉压预算 / B 传统旅馆+二食",
+    "place": "",
+    "countryCode": "JP",
+    "currency": "CNY",
+    "stateFile": "output/{{slug}}-hotel-watch.json"
+  },
+  "watchlist": {},
+  "dates": {
+    "checkInDates": [],
+    "stayNights": 1,
+    "occupancy": { "adultCount": 2, "roomCount": 1 }
+  },
+  "budgetTiers": {
+    "A": {
+      "label": "压预算+设施标签",
+      "maxPricePerNight": 700,
+      "watchlistTiers": ["onsen-hotel", "resort", "chain"],
+      "triggers": {
+        "priceBelow": 700,
+        "dropAmount": 50,
+        "dropPercent": 10,
+        "restock": true
+      },
+      "search": {
+        "requiredTags": ["公共温泉"],
+        "maxPricePerNight": 700
+      }
+    },
+    "B": {
+      "label": "传统旅馆+一泊二食",
+      "maxPricePerNight": 800,
+      "watchlistTiers": ["ryokan"],
+      "triggers": {
+        "priceBelow": 800,
+        "dropAmount": 50,
+        "dropPercent": 10,
+        "restock": true,
+        "halfBoard": true
+      },
+      "search": {
+        "maxPricePerNight": 800
+      }
+    }
+  },
+  "roomPreferences": {
+    "keywords": ["和室"],
+    "excludeKeywords": [],
+    "matchFields": ["roomName", "roomNameCn", "bedTypeDescription", "ratePlanName"]
+  },
+  "triggers": {},
+  "compositeTriggers": [
+    {
+      "id": "fill-nights-distinct",
+      "type": "distinct-hotels-per-night",
+      "priority": "medium",
+      "watchlistTiers": ["ryokan"],
+      "maxPricePerNight": 800,
+      "requireHalfBoard": true
+    }
+  ],
+  "hotelOverrides": {},
+  "schedule": {
+    "enabled": true,
+    "interval": "24h",
+    "silentUnlessTriggered": true,
+    "cron": "0 8 * * *"
+  },
+  "search": {
+    "enabled": true,
+    "placeType": "景点",
+    "places": [],
+    "size": 15
+  }
+}

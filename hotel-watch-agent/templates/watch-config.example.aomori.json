@@ -1,0 +1,80 @@
+{
+  "meta": {
+    "slug": "aomori-onsen",
+    "maxHotels": 10,
+    "note": "示例：青森浅虫温泉，watchlist 10 家，A/B 双层",
+    "place": "浅虫温泉",
+    "countryCode": "JP",
+    "currency": "CNY",
+    "stateFile": "data/aomori-hotel-watch.json"
+  },
+  "watchlist": {
+    "1074466": { "name": "茶花宿屋", "tier": "ryokan" },
+    "217874": { "name": "浅虫樱花观光酒店", "tier": "ryokan" },
+    "617324": { "name": "海扇阁", "tier": "ryokan" },
+    "617323": { "name": "椿馆", "tier": "ryokan" },
+    "449457": { "name": "本阵宿屋·柳之温泉", "tier": "ryokan" },
+    "1017354": { "name": "割烹旅馆五月", "tier": "ryokan" },
+    "1060653": { "name": "浅虫温泉辰巳馆", "tier": "ryokan" },
+    "218895": { "name": "东横INN青森站前", "tier": "chain" },
+    "1616869": { "name": "多美迎青森·淡雪之汤", "tier": "chain" },
+    "110023": { "name": "弘前天然温泉多米", "tier": "chain" }
+  },
+  "dates": {
+    "checkInDates": ["2027-02-08", "2027-02-09", "2027-02-10"],
+    "stayNights": 1,
+    "occupancy": { "adultCount": 2, "roomCount": 1 }
+  },
+  "budgetTiers": {
+    "A": {
+      "label": "公共温泉压预算",
+      "maxPricePerNight": 700,
+      "watchlistTiers": ["chain"],
+      "triggers": { "priceBelow": 700, "dropAmount": 50, "dropPercent": 10, "restock": true },
+      "search": { "requiredTags": ["温泉"], "maxPricePerNight": 700 }
+    },
+    "B": {
+      "label": "传统旅馆+二食",
+      "maxPricePerNight": 800,
+      "watchlistTiers": ["ryokan"],
+      "triggers": { "priceBelow": 800, "dropAmount": 50, "dropPercent": 10, "restock": true, "halfBoard": true },
+      "search": { "maxPricePerNight": 800 }
+    }
+  },
+  "roomPreferences": {
+    "keywords": [],
+    "excludeKeywords": [],
+    "matchFields": ["roomName", "roomNameCn", "bedTypeDescription", "ratePlanName"]
+  },
+  "triggers": {},
+  "compositeTriggers": [
+    {
+      "id": "aomori-three-nights-distinct-700",
+      "type": "distinct-hotels-per-night",
+      "priority": "medium",
+      "watchlistTiers": ["chain"],
+      "maxPricePerNight": 700,
+      "minDistinct": 3
+    }
+  ],
+  "hotelOverrides": {
+    "617324": { "restockPriority": "high", "note": "海扇阁售罄盯回补", "triggers": { "restock": true } },
+    "617323": { "restockPriority": "high", "note": "椿馆售罄盯回补", "triggers": { "restock": true } },
+    "449457": { "restockPriority": "high", "triggers": { "restock": true } },
+    "1017354": { "restockPriority": "high", "triggers": { "restock": true } },
+    "1060653": { "restockPriority": "high", "triggers": { "restock": true } }
+  },
+  "schedule": {
+    "enabled": true,
+    "interval": "24h",
+    "silentUnlessTriggered": true,
+    "cron": "0 8 * * *"
+  },
+  "search": {
+    "enabled": true,
+    "placeType": "景点",
+    "requiredTags": ["温泉"],
+    "places": ["浅虫温泉", "青森"],
+    "size": 15
+  }
+}

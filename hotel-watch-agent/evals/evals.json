@@ -1,0 +1,50 @@
+{
+  "skill_name": "hotel-watch-agent",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "我想监控日本温泉酒店价格，但还没有 RollingGo Key，怎么开始？",
+      "expected_output": "引导 rollinggo.store 申请 Key、配置 MCP、运行 check_rollinggo_hotel.py，不调用查价",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "帮我盯曼谷五星级酒店 2026年12月，还没想好具体哪家",
+      "expected_output": "分步访谈：国家、地点、酒店≤10、日期、预算、房型、阈值；可用 generic-worldwide 预设；不一次抛全部问题",
+      "files": ["templates/presets/generic-worldwide.json"]
+    },
+    {
+      "id": 3,
+      "prompt": "海扇阁之前售罄了，帮我监控有房就通知，预算800以内，和室",
+      "expected_output": "config 含 restock、roomPreferences 和室；hotelOverrides 可选；触发时三链告警",
+      "files": ["templates/watch-config.example.aomori.json"]
+    },
+    {
+      "id": 4,
+      "prompt": "配置好了，外部 cron 每24小时查一次，没降价别打扰我",
+      "expected_output": "render_loop_prompt 产出 loop+cron；silentUnlessTriggered；说明 cron 跑 run_watch_round 有触发再唤 Agent",
+      "files": ["references/scheduling-optional.md"]
+    },
+    {
+      "id": 5,
+      "prompt": "青森函馆两个任务一起监控",
+      "expected_output": "render_loop_prompt --combine 两个 config；任一 triggered 汇总回复",
+      "files": [
+        "templates/watch-config.example.aomori.json",
+        "templates/watch-config.example.hakodate.json"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "10家酒店4晚，帮我跑一轮监控",
+      "expected_output": "先 estimate_watch 展示 40+ 次 API；未确认拒绝 run_watch_round；确认后 --confirm",
+      "files": ["scripts/estimate_watch.py", "scripts/run_watch_round.py"]
+    },
+    {
+      "id": 7,
+      "prompt": "四晚凑齐四家不同 ryokan 且都含二食800以内就通知",
+      "expected_output": "compositeTriggers distinct-hotels-per-night，requireHalfBoard，minDistinct 4",
+      "files": ["templates/watch-config.example.hakodate.json", "references/trigger-rules.md"]
+    }
+  ]
+}

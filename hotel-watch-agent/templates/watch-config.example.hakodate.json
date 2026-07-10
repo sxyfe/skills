@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "slug": "hakodate-yunokawa",
+    "maxHotels": 10,
+    "note": "示例：函馆汤之川温泉 6 家，A/B 双层 + 组合触发",
+    "place": "汤之川温泉",
+    "countryCode": "JP",
+    "currency": "CNY",
+    "stateFile": "data/hakodate-hotel-watch.json"
+  },
+  "watchlist": {
+    "167163": { "name": "花菱酒店 Hanabishi", "tier": "ryokan" },
+    "193663": { "name": "Tabist 竹叶新叶亭", "tier": "ryokan" },
+    "1400815": { "name": "汤之川欢呼初演 Shoen", "tier": "ryokan" },
+    "137967": { "name": "汤元啄木亭", "tier": "ryokan" },
+    "225206": { "name": "日式温泉艾米 Hakodateya", "tier": "onsen-hotel" },
+    "77852": { "name": "函馆汤之川温泉 Imagine", "tier": "resort" }
+  },
+  "dates": {
+    "checkInDates": ["2027-02-03", "2027-02-04", "2027-02-05", "2027-02-06"],
+    "stayNights": 1,
+    "occupancy": { "adultCount": 2, "roomCount": 1 }
+  },
+  "budgetTiers": {
+    "A": {
+      "label": "公共温泉",
+      "maxPricePerNight": 700,
+      "watchlistTiers": ["onsen-hotel", "resort"],
+      "triggers": { "priceBelow": 700, "dropAmount": 50, "dropPercent": 10, "restock": true },
+      "search": { "requiredTags": ["公共温泉"], "maxPricePerNight": 700 }
+    },
+    "B": {
+      "label": "传统旅馆+二食",
+      "maxPricePerNight": 800,
+      "watchlistTiers": ["ryokan"],
+      "triggers": { "priceBelow": 800, "dropAmount": 50, "dropPercent": 10, "restock": true, "halfBoard": true },
+      "search": { "maxPricePerNight": 800 }
+    }
+  },
+  "roomPreferences": {
+    "keywords": ["和室"],
+    "excludeKeywords": [],
+    "matchFields": ["roomName", "roomNameCn", "bedTypeDescription", "ratePlanName"]
+  },
+  "triggers": {},
+  "compositeTriggers": [
+    {
+      "id": "hakodate-four-nights-distinct-ryokan",
+      "type": "distinct-hotels-per-night",
+      "priority": "medium",
+      "watchlistTiers": ["ryokan"],
+      "maxPricePerNight": 800,
+      "requireHalfBoard": true,
+      "minDistinct": 4
+    },
+    {
+      "id": "hanabishi-0206-below-800",
+      "type": "hotel-date-price-cross",
+      "priority": "high",
+      "hotelId": "167163",
+      "date": "2027-02-06",
+      "targetPrice": 800,
+      "fromPriceMin": 1020
+    }
+  ],
+  "hotelOverrides": {
+    "1400815": {
+      "note": "Shoen 2/6 缺口",
+      "dateRules": {
+        "2027-02-06": { "targetPrice": 800, "priority": "high" }
+      }
+    },
+    "193663": {
+      "dateRules": {
+        "2027-02-06": { "targetPrice": 800, "priority": "high" }
+      }
+    }
+  },
+  "schedule": {
+    "enabled": true,
+    "interval": "24h",
+    "silentUnlessTriggered": true,
+    "cron": "0 8 * * *"
+  },
+  "search": {
+    "enabled": true,
+    "placeType": "景点",
+    "requiredTags": ["公共温泉"],
+    "places": ["汤之川温泉", "函馆"],
+    "size": 15
+  }
+}

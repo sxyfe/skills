@@ -1,0 +1,44 @@
+{
+  "meta": {
+    "slug": "generic-worldwide",
+    "maxHotels": 10,
+    "note": "全球酒店通用预设壳：访谈时填入国家/城市/酒店/日期",
+    "place": "",
+    "countryCode": "",
+    "currency": "CNY",
+    "stateFile": "output/{{slug}}-hotel-watch.json"
+  },
+  "watchlist": {},
+  "dates": {
+    "checkInDates": [],
+    "stayNights": 1,
+    "occupancy": { "adultCount": 2, "roomCount": 1 }
+  },
+  "budget": {
+    "maxPricePerNight": null
+  },
+  "roomPreferences": {
+    "keywords": [],
+    "excludeKeywords": [],
+    "matchFields": ["roomName", "roomNameCn", "bedTypeDescription", "ratePlanName"]
+  },
+  "triggers": {
+    "restock": true,
+    "dropAmount": 50,
+    "dropPercent": 10
+  },
+  "compositeTriggers": [],
+  "hotelOverrides": {},
+  "schedule": {
+    "enabled": false,
+    "interval": "24h",
+    "silentUnlessTriggered": true,
+    "cron": "0 8 * * *"
+  },
+  "search": {
+    "enabled": true,
+    "placeType": "城市",
+    "places": [],
+    "size": 15
+  }
+}

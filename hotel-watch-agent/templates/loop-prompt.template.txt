@@ -1,0 +1,24 @@
+执行 hotel-watch-agent 监控一轮。
+
+## 配置与状态
+- watch-config：{{CONFIG_PATH}}
+- state JSON：{{STATE_PATH}}
+- Skill 根目录：{{SKILL_ROOT}}
+- 预估 API：{{ESTIMATED_API}} 次/轮
+
+## 执行步骤（须按序）
+
+1. **预估**（配置变更或首次）：
+   ```bash
+   python3 {{SKILL_ROOT}}/scripts/estimate_watch.py --config {{CONFIG_PATH}} --json
+   ```
+2. **用户确认**：向用户展示预估次数；超过 {{HIGH_COST_THRESHOLD}} 次须明确确认后再执行。
+3. **查价一轮**：
+   ```bash
+   python3 {{SKILL_ROOT}}/scripts/run_watch_round.py --config {{CONFIG_PATH}} --state {{STATE_PATH}} --confirm
+   ```
+4. **告警**：解析 stdout JSON；`triggered=true` 时按 `templates/alert-message.template.md` 输出三链表格。
+5. **静默规则**：{{SILENT_RULE}}
+
+## MCP
+使用 **user-RollingGo-Hotel**（或 RollingGo-Hotel）：`searchHotels` + `getHotelDetail`。

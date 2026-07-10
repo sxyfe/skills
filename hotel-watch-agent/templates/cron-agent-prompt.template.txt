@@ -1,0 +1,40 @@
+# {{SLUG}} · 外部 cron + Agent 定时监控
+
+间隔约 **{{INTERVAL}}**；cron 表达式：**{{CRON}}**
+
+## 方式 A · 纯脚本 + 有触发再唤 Agent（推荐）
+
+```bash
+# crontab -e
+{{CRON}} /usr/bin/env bash -lc '
+  OUT=/tmp/{{SLUG}}-round.json
+  python3 {{SKILL_ROOT}}/scripts/run_watch_round.py \
+    --config {{CONFIG_PATH}} \
+    --state {{STATE_PATH}} \
+    --confirm --output "$OUT" || exit 0
+  if python3 -c "import json; exit(0 if json.load(open(\"$OUT\")).get(\"triggered\") else 1)"; then
+    # 替换为你的 Agent CLI，例如 Cursor / Claude Code / OpenClaw
+    cursor agent --prompt "读取 $OUT，按 hotel-watch-agent 告警模板向用户发送三链告警"
+  fi
+' >> ~/.logs/{{SLUG}}-watch.log 2>&1
+```
+
+## 方式 B · 每轮全 Agent（借助 Agent 处理异常与格式化）
+
+```bash
+{{CRON}} /usr/bin/env bash -lc '
+  PROMPT=$(cat {{CONFIG_PATH}} | sed "s/watch-config/loop-prompt/" 2>/dev/null || cat {{SKILL_ROOT}}/templates/loop-prompt.template.txt)
+  cursor agent --prompt "$(python3 {{SKILL_ROOT}}/scripts/render_loop_prompt.py --config {{CONFIG_PATH}} --mode loop 2>&1 | tail -1 || echo run loop)"
+' >> ~/.logs/{{SLUG}}-watch.log 2>&1
+```
+
+## Agent 每轮职责
+
+1. 运行 `estimate_watch.py` 展示 API 次数（配置变更时）
+2. 运行 `run_watch_round.py --confirm` 更新 state
+3. 有 `compositeTriggers` 命中时汇总跨晚组合说明
+4. `silentUnlessTriggered=true` 且无触发 → **NO_REPLY**
+
+## 日志
+
+建议：`~/.logs/{{SLUG}}-watch.log`

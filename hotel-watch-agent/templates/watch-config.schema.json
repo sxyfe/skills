@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "HotelWatchConfig",
+  "type": "object",
+  "required": ["meta", "watchlist", "dates", "triggers"],
+  "properties": {
+    "meta": {
+      "type": "object",
+      "required": ["slug", "stateFile"],
+      "properties": {
+        "slug": { "type": "string" },
+        "maxHotels": { "type": "integer", "maximum": 10 },
+        "place": { "type": "string" },
+        "countryCode": { "type": "string", "description": "ISO 3166-1 alpha-2，全球通用" },
+        "currency": { "type": "string", "default": "CNY" },
+        "stateFile": { "type": "string" },
+        "configFile": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "note": { "type": "string" }
+      }
+    },
+    "watchlist": {
+      "type": "object",
+      "maxProperties": 10,
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "nameEn": { "type": "string" },
+          "tier": {
+            "type": "string",
+            "description": "自定义分层标签，与 budgetTiers.watchlistTiers 对应"
+          }
+        },
+        "required": ["name"]
+      }
+    },
+    "dates": {
+      "type": "object",
+      "required": ["checkInDates"],
+      "properties": {
+        "checkInDates": {
+          "type": "array",
+          "items": { "type": "string", "format": "date" },
+          "minItems": 1
+        },
+        "stayNights": { "type": "integer", "minimum": 1, "default": 1 },
+        "occupancy": {
+          "type": "object",
+          "properties": {
+            "adultCount": { "type": "integer", "minimum": 1 },
+            "roomCount": { "type": "integer", "minimum": 1 },
+            "childCount": { "type": "integer", "minimum": 0 }
+          }
+        }
+      }
+    },
+    "budget": {
+      "type": "object",
+      "description": "单层预算（与 budgetTiers 二选一；budgetTiers 优先）",
+      "properties": {
+        "maxPricePerNight": { "type": ["number", "null"] }
+      }
+    },
+    "budgetTiers": {
+      "type": "object",
+      "description": "多层预算，如 A 层公共温泉 / B 层传统旅馆",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "maxPricePerNight": { "type": "number" },
+          "watchlistTiers": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "watchlist.tier 命中其一即适用本层"
+          },
+          "triggers": {
+            "type": "object",
+            "properties": {
+              "priceBelow": { "type": "number" },
+              "dropAmount": { "type": "number" },
+              "dropPercent": { "type": "number" },
+              "restock": { "type": "boolean" },
+              "halfBoard": { "type": "boolean" }
+            }
+          },
+          "search": {
+            "type": "object",
+            "properties": {
+              "requiredTags": { "type": "array", "items": { "type": "string" } },
+              "maxPricePerNight": { "type": "number" }
+            }
+          }
+        }
+      }
+    },
+    "roomPreferences": {
+      "type": "object",
+      "properties": {
+        "keywords": { "type": "array", "items": { "type": "string" } },
+        "excludeKeywords": { "type": "array", "items": { "type": "string" } },
+        "matchFields": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "triggers": {
+      "type": "object",
+      "description": "全局默认触发（可被 budgetTiers / hotelOverrides 覆盖）",
+      "properties": {
+        "priceBelow": { "type": "number" },
+        "dropAmount": { "type": "number" },
+        "dropPercent": { "type": "number" },
+        "restock": { "type": "boolean" },
+        "halfBoard": { "type": "boolean" }
+      }
+    },
+    "compositeTriggers": {
+      "type": "array",
+      "description": "跨酒店/跨晚组合触发",
+      "items": {
+        "type": "object",
+        "required": ["id", "type"],
+        "properties": {
+          "id": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": [
+              "distinct-hotels-per-night",
+              "all-nights-same-hotel-below",
+              "hotel-date-price-cross"
+            ]
+          },
+          "priority": { "type": "string", "enum": ["high", "medium", "low"], "default": "medium" },
+          "tier": { "type": "string" },
+          "watchlistTiers": { "type": "array", "items": { "type": "string" } },
+          "maxPricePerNight": { "type": "number" },
+          "minDistinct": { "type": "integer" },
+          "requireHalfBoard": { "type": "boolean" },
+          "hotelId": { "type": "string" },
+          "date": { "type": "string" },
+          "targetPrice": { "type": "number" },
+          "fromPriceMin": { "type": "number", "description": "baseline 或上轮价须 ≥ 此值才触发跨价" }
+        }
+      }
+    },
+    "hotelOverrides": {
+      "type": "object",
+      "description": "单酒店特例规则",
+      "additionalProperties": {
+        "type": "object",
+        "properties": {
+          "restockPriority": { "type": "string", "enum": ["high", "medium", "low"] },
+          "note": { "type": "string" },
+          "triggers": {
+            "type": "object",
+            "properties": {
+              "priceBelow": { "type": "number" },
+              "dropAmount": { "type": "number" },
+              "dropPercent": { "type": "number" },
+              "restock": { "type": "boolean" },
+              "halfBoard": { "type": "boolean" }
+            }
+          },
+          "dateRules": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "object",
+              "properties": {
+                "targetPrice": { "type": "number" },
+                "fromPriceMin": { "type": "number" },
+                "priority": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schedule": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "interval": { "type": "string" },
+        "silentUnlessTriggered": { "type": "boolean" },
+        "cron": { "type": "string", "description": "外部 cron 表达式，如 0 8 * * *" }
+      }
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "enabled": { "type": "boolean", "default": true },
+        "placeType": { "type": "string" },
+        "requiredTags": { "type": "array", "items": { "type": "string" } },
+        "places": { "type": "array", "items": { "type": "string" } },
+        "size": { "type": "integer", "maximum": 20 }
+      }
+    }
+  }
+}
