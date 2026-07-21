@@ -1,0 +1,74 @@
+:root {
+ --bg: #f3efe6;
+ --ink: #1a1a1a;
+ --muted: #6b6560;
+ --panel: #fffdf8;
+ --accent: #c45c26;
+ --stage-w: min(360px, 42vw);
+}
+
+* { box-sizing: border-box; }
+
+body {
+ margin: 0;
+ min-height: 100vh;
+ font-family: "Songti SC", "STSong", "Noto Serif SC", Georgia, serif;
+ color: var(--ink);
+ background:
+ radial-gradient(ellipse 80% 50% at 20% 0%, #fff8ee 0%, transparent 55%),
+ radial-gradient(ellipse 60% 40% at 90% 100%, #e8dfd0 0%, transparent 50%),
+ var(--bg);
+}
+
+.app { max-width: 920px; margin: 0 auto; padding: 24px 20px 48px; }
+.bar h1 { margin: 0 0 14px; font-size: 1.35rem; font-weight: 600; }
+.controls {
+ display: flex; flex-wrap: wrap; align-items: center;
+ gap: 10px 12px; margin-bottom: 20px;
+}
+button {
+ font: inherit; font-size: 0.95rem; padding: 8px 16px;
+ border: 1px solid #cfc6b8; background: var(--panel);
+ color: var(--ink); cursor: pointer; border-radius: 2px;
+}
+button:hover { border-color: var(--accent); color: var(--accent); }
+.time-label {
+ font-family: Menlo, "SF Mono", monospace;
+ font-size: 0.85rem; color: var(--muted); min-width: 4rem;
+}
+#scrub { flex: 1; min-width: 160px; accent-color: var(--accent); }
+.stage-wrap { display: flex; justify-content: center; padding: 12px 0 8px; }
+.stage {
+ position: relative; width: var(--stage-w); aspect-ratio: 9 / 16;
+ background: #fff; overflow: hidden;
+ box-shadow: 0 1px 0 rgba(0,0,0,0.04), 0 18px 40px rgba(40, 30, 20, 0.14);
+}
+.shot-layer { position: absolute; inset: 0; }
+.frame { position: absolute; inset: 0; opacity: 0; pointer-events: none; }
+.frame.active { opacity: 1; }
+.img-stack {
+ position: absolute; inset: 0;
+ -webkit-mask-image: linear-gradient(90deg, #000 0%, #000 var(--wipe, 0%), transparent var(--wipe, 0%));
+ mask-image: linear-gradient(90deg, #000 0%, #000 var(--wipe, 0%), transparent var(--wipe, 0%));
+ transform: scale(var(--zoom, 1));
+ transform-origin: center 55%;
+}
+.img-stack img {
+ position: absolute; inset: 0; width: 100%; height: 100%;
+ object-fit: cover; display: block;
+}
+.img-stack .bw { opacity: 1; }
+.img-stack .color { opacity: var(--color-op, 0); }
+.caption {
+ position: absolute; top: 6.5%; left: 7%; right: 7%; z-index: 5;
+ font-size: clamp(15px, 4.6vw, 20px); line-height: 1.55;
+ color: #222; text-align: center; letter-spacing: 0.04em;
+ opacity: 0; white-space: pre-line;
+ text-shadow: 0 0 12px #fff, 0 0 4px #fff;
+ font-family: "Kaiti SC", "STKaiti", "KaiTi", "Songti SC", serif;
+}
+.fade-out {
+ position: absolute; inset: 0; background: #fff;
+ opacity: 0; pointer-events: none; z-index: 8;
+}
+.hint { text-align: center; color: var(--muted); font-size: 0.88rem; margin-top: 18px; }

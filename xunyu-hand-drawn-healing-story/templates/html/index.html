@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+ <meta charset="UTF-8" />
+ <meta name="viewport" content="width=device-width, initial-scale=1" />
+ <title>手绘视频预览 · HTML</title>
+ <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+ <div class="app">
+ <header class="bar">
+ <h1>横扫 + 上色 · HTML 预览</h1>
+ <div class="controls">
+ <button id="btnPlay" type="button">播放</button>
+ <button id="btnPause" type="button">暂停</button>
+ <button id="btnRestart" type="button">重来</button>
+ <label class="time-label"><span id="timeText">0.0</span>s</label>
+ <input id="scrub" type="range" min="0" max="15" step="0.01" value="0" />
+ </div>
+ </header>
+ <div class="stage-wrap">
+ <div id="stage" class="stage" aria-label="竖屏预览 9:16">
+ <div id="shotLayer" class="shot-layer"></div>
+ <div id="caption" class="caption"></div>
+ <div id="fadeOut" class="fade-out"></div>
+ </div>
+ </div>
+ <p class="hint">将 NN-bw.png / NN-color.png 放入 assets/，并编辑 main.js 的 SHOTS。动效：wipe → 上色 → 顶部旁白。</p>
+ </div>
+ <script src="main.js"></script>
+</body>
+</html>

@@ -1,0 +1,128 @@
+// 编辑本数组；assets/ 下放 NN-bw.png / NN-color.png
+const SHOTS = [
+  { id: 1, dur: 5, text: "第一句旁白。" },
+  { id: 2, dur: 5, text: "第二句旁白。" },
+  { id: 3, dur: 5, text: "第三句旁白。\n可两行。" },
+];
+
+// 与 defaults.yaml 对齐；调参改这里即可
+const WIPE = 1.0;
+const COLOR_FADE = 0.8;
+const CAPTION_FADE = 0.45;
+
+const TOTAL = SHOTS.reduce((s, x) => s + x.dur, 0);
+const pad = (n) => String(n).padStart(2, "0");
+const shotLayer = document.getElementById("shotLayer");
+const captionEl = document.getElementById("caption");
+const fadeOutEl = document.getElementById("fadeOut");
+const timeText = document.getElementById("timeText");
+const scrub = document.getElementById("scrub");
+
+let playing = false;
+let t = 0;
+let lastTs = null;
+let frames = [];
+
+function easeOutCubic(x) {
+  return 1 - Math.pow(1 - x, 3);
+}
+
+function buildFrames() {
+  shotLayer.innerHTML = "";
+  frames = SHOTS.map((shot) => {
+    const wrap = document.createElement("div");
+    wrap.className = "frame";
+    const stack = document.createElement("div");
+    stack.className = "img-stack";
+    const bw = document.createElement("img");
+    bw.className = "bw";
+    bw.alt = `镜${shot.id} bw`;
+    bw.src = `assets/${pad(shot.id)}-bw.png`;
+    const color = document.createElement("img");
+    color.className = "color";
+    color.alt = `镜${shot.id} color`;
+    color.src = `assets/${pad(shot.id)}-color.png`;
+    stack.appendChild(bw);
+    stack.appendChild(color);
+    wrap.appendChild(stack);
+    shotLayer.appendChild(wrap);
+    return { wrap, stack, shot };
+  });
+}
+
+function shotAt(time) {
+  let acc = 0;
+  for (let i = 0; i < SHOTS.length; i++) {
+    const next = acc + SHOTS[i].dur;
+    if (time < next || i === SHOTS.length - 1) {
+      return { index: i, local: Math.min(time - acc, SHOTS[i].dur - 0.0001) };
+    }
+    acc = next;
+  }
+  return { index: 0, local: 0 };
+}
+
+function render(time) {
+  const { index, local } = shotAt(time);
+  const shot = SHOTS[index];
+  frames.forEach((f, i) => f.wrap.classList.toggle("active", i === index));
+  const { stack } = frames[index];
+  const wipePct = easeOutCubic(Math.min(1, Math.max(0, local / WIPE))) * 100;
+  stack.style.setProperty("--wipe", `${wipePct}%`);
+  const colorStart = WIPE * 0.85;
+  const colorT = Math.min(1, Math.max(0, (local - colorStart) / COLOR_FADE));
+  stack.style.setProperty("--color-op", String(easeOutCubic(colorT)));
+  stack.style.setProperty("--zoom", String(1 + 0.04 * (local / shot.dur)));
+  let capOp = 0;
+  if (local >= 0.15) capOp = Math.min(1, (local - 0.15) / CAPTION_FADE);
+  captionEl.textContent = shot.text;
+  captionEl.style.opacity = String(easeOutCubic(capOp));
+  let fade = 0;
+  if (index === SHOTS.length - 1 && local > shot.dur - 0.4) {
+    fade = (local - (shot.dur - 0.4)) / 0.4;
+  }
+  fadeOutEl.style.opacity = String(Math.min(1, Math.max(0, fade)));
+  timeText.textContent = time.toFixed(1);
+  if (document.activeElement !== scrub) scrub.value = String(time);
+}
+
+function tick(ts) {
+  if (!playing) { lastTs = null; return; }
+  if (lastTs == null) lastTs = ts;
+  const dt = (ts - lastTs) / 1000;
+  lastTs = ts;
+  t += dt;
+  if (t >= TOTAL) {
+    t = TOTAL;
+    playing = false;
+    document.getElementById("btnPlay").textContent = "播放";
+  }
+  render(t);
+  if (playing) requestAnimationFrame(tick);
+}
+
+buildFrames();
+scrub.max = String(TOTAL);
+render(0);
+
+document.getElementById("btnPlay").addEventListener("click", () => {
+  if (t >= TOTAL) t = 0;
+  playing = true;
+  document.getElementById("btnPlay").textContent = "播放中…";
+  requestAnimationFrame(tick);
+});
+document.getElementById("btnPause").addEventListener("click", () => {
+  playing = false;
+  document.getElementById("btnPlay").textContent = "播放";
+  render(t);
+});
+document.getElementById("btnRestart").addEventListener("click", () => {
+  t = 0;
+  playing = true;
+  document.getElementById("btnPlay").textContent = "播放中…";
+  requestAnimationFrame(tick);
+});
+scrub.addEventListener("input", () => {
+  t = Number(scrub.value);
+  render(t);
+});

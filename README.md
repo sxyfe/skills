@@ -1,30 +1,23 @@
 # skills
 
-RollingGo 旅行查价 Agent Skills 合集，可通过 [skills.sh](https://skills.sh) 安装到 Cursor、Claude Code、Codex 等 40+ Agent。
+Agent Skills 合集，可通过 [skills.sh](https://skills.sh) 安装到 Cursor、Claude Code、Codex 等 40+ Agent。
 
 [![skills.sh](https://img.shields.io/badge/skills.sh-sxyfe%2Fskills-blue)](https://skills.sh/sxyfe/skills)
 
 ## Skill 目录
 
-| Skill | 说明 | MCP 服务 | 安装 |
+| Skill | 说明 | 依赖 | 安装 |
 | --- | --- | --- | --- |
-| [flight-monitor-agent](flight-monitor-agent/) | 航班实时查价、精简/全量穷举、暖色 HTML 分页报告 | RollingGo-Flight | `npx skills add sxyfe/skills@flight-monitor-agent -g -y` |
-| [hotel-watch-agent](hotel-watch-agent/) | 全球酒店价格监控、A/B 预算、组合触发、cron+Agent 定时告警 | RollingGo-Hotel | `npx skills add sxyfe/skills@hotel-watch-agent -g -y` |
-
-### 两者对比
-
-| | flight-monitor-agent | hotel-watch-agent |
-|---|---------------------|-------------------|
-| 典型场景 | 「帮我查国庆东南亚特价」 | 「盯着这几家酒店，降价/有房通知我」 |
-| 输出 | 一次性 HTML 报告 | 持久 state JSON + 条件告警 |
-| API 确认阈值 | >500 次 | >100 次 |
-| 源码位置 | 本仓库 `flight-monitor-agent/` | 本仓库 `hotel-watch-agent/` |
-
-共用 [RollingGo API Key](https://rollinggo.store/)（`mcp_...`），Flight / Hotel 分别配置 MCP。
+| [xunyu-hand-drawn-healing-story](xunyu-hand-drawn-healing-story/) | 白色极简手绘竖屏短视频（主题通用）：一句话出片，默认 video-use，另支持 HTML / Remotion / Hyperframes | ffmpeg + Python；生图可选 | `npx skills add sxyfe/skills@xunyu-hand-drawn-healing-story -g -y` |
+| [flight-monitor-agent](flight-monitor-agent/) | 航班实时查价、精简/全量穷举、暖色 HTML 分页报告 | RollingGo-Flight MCP | `npx skills add sxyfe/skills@flight-monitor-agent -g -y` |
+| [hotel-watch-agent](hotel-watch-agent/) | 全球酒店价格监控、A/B 预算、组合触发、cron+Agent 定时告警 | RollingGo-Hotel MCP | `npx skills add sxyfe/skills@hotel-watch-agent -g -y` |
 
 ## 安装
 
 ```bash
+# 手绘竖屏短视频（通用）
+npx skills add sxyfe/skills@xunyu-hand-drawn-healing-story -g -y
+
 # 航班查价
 npx skills add sxyfe/skills@flight-monitor-agent -g -y
 
@@ -32,24 +25,26 @@ npx skills add sxyfe/skills@flight-monitor-agent -g -y
 npx skills add sxyfe/skills@hotel-watch-agent -g -y
 
 # 仅 Cursor
-npx skills add sxyfe/skills@flight-monitor-agent -g -y -a cursor
+npx skills add sxyfe/skills@xunyu-hand-drawn-healing-story -g -y -a cursor
 ```
+
+浏览：https://skills.sh/sxyfe/skills
 
 ### 本地开发
 
-两个 Skill 源码均在本仓库根目录。本地调试时，可将目录链接到所用 Agent 的 Skills 路径：
+Skill 源码均在本仓库根目录。本地调试时，可将目录链接到所用 Agent 的 Skills 路径：
 
 ```bash
-# 在仓库根目录执行；将 REPO_ROOT 替换为你的克隆路径
 REPO_ROOT="$(pwd)"
 
 # Cursor
-ln -s "$REPO_ROOT/flight-monitor-agent" ~/.cursor/skills/flight-monitor-agent
-ln -s "$REPO_ROOT/hotel-watch-agent" ~/.cursor/skills/hotel-watch-agent
+ln -sfn "$REPO_ROOT/xunyu-hand-drawn-healing-story" ~/.cursor/skills/xunyu-hand-drawn-healing-story
+ln -sfn "$REPO_ROOT/flight-monitor-agent" ~/.cursor/skills/flight-monitor-agent
+ln -sfn "$REPO_ROOT/hotel-watch-agent" ~/.cursor/skills/hotel-watch-agent
 
 # Claude Code（项目级示例）
 mkdir -p .claude/skills
-ln -s "$REPO_ROOT/flight-monitor-agent" .claude/skills/flight-monitor-agent
+ln -sfn "$REPO_ROOT/xunyu-hand-drawn-healing-story" .claude/skills/xunyu-hand-drawn-healing-story
 ```
 
 修改源码后，**新开 Agent 对话**或重启 Agent 以重新加载 `SKILL.md`。
@@ -59,23 +54,31 @@ ln -s "$REPO_ROOT/flight-monitor-agent" .claude/skills/flight-monitor-agent
 ```
 skills/
 ├── README.md
-├── flight-monitor-agent/     # 航班查价（源码）
+├── xunyu-hand-drawn-healing-story/   # 白色极简手绘竖屏（通用）
 │   ├── SKILL.md
 │   ├── README.md
+│   ├── assets/
 │   ├── scripts/
-│   └── templates/
-└── hotel-watch-agent/        # 酒店监控
-    ├── SKILL.md
-    ├── README.md
-    ├── scripts/
-    ├── templates/
-    └── references/
+│   ├── templates/
+│   └── references/
+├── flight-monitor-agent/             # 航班查价
+└── hotel-watch-agent/                # 酒店监控
 ```
+
+## 旅行类 Skill 说明
+
+`flight-monitor-agent` 与 `hotel-watch-agent` 共用 [RollingGo API Key](https://rollinggo.store/)（`mcp_...`），Flight / Hotel 分别配置 MCP。
+
+| | flight-monitor-agent | hotel-watch-agent |
+|---|---------------------|-------------------|
+| 典型场景 | 「帮我查国庆东南亚特价」 | 「盯着这几家酒店，降价/有房通知我」 |
+| 输出 | 一次性 HTML 报告 | 持久 state JSON + 条件告警 |
 
 ## 要求
 
-- Python 3.8+
-- [RollingGo API Key](https://rollinggo.store/)
+- Python 3.8+（多数 Skill）
+- 手绘视频：本机 `ffmpeg`；完整生图需配置可选 API Key
+- 旅行监控：RollingGo API Key
 
 ## License
 

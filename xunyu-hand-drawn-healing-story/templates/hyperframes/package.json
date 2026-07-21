@@ -1,0 +1,14 @@
+{
+ "name": "hand-drawn-healing-hyperframes",
+ "private": true,
+ "type": "module",
+ "scripts": {
+ "dev": "npx --yes hyperframes@0.7.33 preview",
+ "check": "npx --yes hyperframes@0.7.33 lint && npx --yes hyperframes@0.7.33 validate && npx --yes hyperframes@0.7.33 inspect",
+ "render": "npx --yes hyperframes@0.7.33 render . --quality high --output out/episode.mp4",
+ "render:draft": "npx --yes hyperframes@0.7.33 render . --quality draft --output out/episode-draft.mp4"
+ },
+ "devDependencies": {
+ "hyperframes": "^0.7.33"
+ }
+}

@@ -1,0 +1,117 @@
+{
+  "skill_name": "xunyu-hand-drawn-healing-story",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "做一条手绘短视频，大概一分钟",
+      "expected_output": "自然语言入口；最多 0–1 问；theme 默认 02（或等价）；mode=smoke 或等价跳过真生图；6–9 镜分镜+shots.json；默认 engine=video-use、BGM none；给出可执行 smoke_render 或等价路径；一行输出路径（或说明将写入的 exports 路径）。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "nl-no-interrogation",
+          "text": "未连环追问主题/引擎/生图通道（最多 1 问）",
+          "measurable": true
+        },
+        {
+          "id": "defaults-smoke",
+          "text": "走 smoke/defaults（占位或跳过生图）或明确等价测通路径",
+          "measurable": true
+        },
+        {
+          "id": "shots-6-9",
+          "text": "分镜/shots 在 6–9 镜，约一分钟量级",
+          "measurable": true
+        },
+        {
+          "id": "engine-video-use",
+          "text": "默认 engine=video-use（除非用户另指定）",
+          "measurable": true
+        },
+        {
+          "id": "output-path-line",
+          "text": "用一行给出或预告 exports 成片路径",
+          "measurable": true
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "主题用自我和解，engine 用 html 只要预览",
+      "expected_output": "theme_id 06；engine=html；templates/html 复制/填充与 open 预览步骤；明确不跑 ffmpeg / 不出 mp4。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "theme-06",
+          "text": "主题为 06 自我和解",
+          "measurable": true
+        },
+        {
+          "id": "engine-html",
+          "text": "engine 为 html",
+          "measurable": true
+        },
+        {
+          "id": "no-ffmpeg",
+          "text": "明确本轮不渲染 mp4 / 不跑 render_ffmpeg",
+          "measurable": true
+        },
+        {
+          "id": "html-preview",
+          "text": "给出 HTML 预览步骤或 open 命令",
+          "measurable": true
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "wipe 慢一点，出分镜不要渲染",
+      "expected_output": "只产出分镜 md + shots.json + config（wipe 加长，如 1.4s）；不生图、不合成；engine/bgm 可保留默认说明。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "storyboard-only",
+          "text": "产出分镜与 shots，且明确不渲染",
+          "measurable": true
+        },
+        {
+          "id": "wipe-slower",
+          "text": "wipe 时长大于默认 1.0（如 1.3–1.5）",
+          "measurable": true
+        },
+        {
+          "id": "no-render",
+          "text": "未调用 smoke_render / render_ffmpeg / npm render",
+          "measurable": true
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "做一条 50 秒竖屏手绘视频，主题选时间与等待",
+      "expected_output": "theme_id 02；约 50s；6–9 镜；双平台标题；默认 video-use + BGM none；可 smoke 或 full；一行输出路径。",
+      "files": [],
+      "assertions": [
+        {
+          "id": "theme-02",
+          "text": "主题 02 时间与等待",
+          "measurable": true
+        },
+        {
+          "id": "duration-50",
+          "text": "目标时长约 50 秒",
+          "measurable": true
+        },
+        {
+          "id": "dual-titles",
+          "text": "视频号 + 抖音双标题",
+          "measurable": true
+        },
+        {
+          "id": "bgm-none",
+          "text": "成片静音 / BGM none",
+          "measurable": true
+        }
+      ]
+    }
+  ]
+}

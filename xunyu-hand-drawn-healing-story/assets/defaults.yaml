@@ -1,0 +1,132 @@
+# xunyu-hand-drawn-healing-story · defaults
+# Override in project config.yaml (shallow merge). NEVER commit API keys.
+
+version: 3
+
+# —— 运行模式 ——
+# smoke：跳过真生图，占位图/已有素材也能出短 mp4（测通）
+# full：按 image-gen 真生图后合成
+mode: smoke
+
+# —— 画幅 / 时长 / 分镜 ——
+aspect_ratio: "9:16"
+width: 1080
+height: 1920
+fps: 30
+target_duration_sec: 50          # 说「一分钟」时用 55–60
+shot_count: 7                    # 合法 6–9；可配置
+shot_durations_sec: [6, 7, 7, 7, 8, 7, 8]  # 总和 ≈50；镜数变化时由 Agent 重算
+hard_cut: true
+default_theme_id: "02"           # 用户未指定主题时
+
+# —— 视觉规格（通用 · 主题不限）——
+visual_category: white_minimal_handdrawn_general
+theme_id: null                   # null → 用 default_theme_id；也可整段自拟主题
+platforms: ["shipinhao", "douyin"]
+
+# —— 动效 ——
+wipe:
+  enabled: true
+  direction: left_to_right
+  duration_sec: 1.0
+bw_to_color:
+  enabled: true
+  require_paired_assets: true    # smoke 占位图仍成对生成
+  fade_start_sec: 0.85
+  fade_duration_sec: 0.8
+caption_fade_in:
+  start_sec: 0.15
+  duration_sec: 0.45
+last_shot_fade_out_sec: 0.4
+
+# —— 引擎 ——
+engine: video-use
+engine_allowed: [video-use, html, remotion, hyperframes]
+
+# —— 导出 ——
+export:
+  codec: h264
+  pixel_format: yuv420p
+  crf: 18
+  preset: veryfast
+  include_silent_audio: false
+  filename_pattern: "{slug}-ep{ep:02d}.mp4"
+
+# —— 生图 ——
+image_gen:
+  channel: auto                  # auto | cursor_generate_image | openai_images | http_api | skip
+  size: "1024x1792"
+  require_bw_pair: true
+  # smoke / channel=skip：不调用生图 API
+  env_keys:
+    openai: OPENAI_API_KEY
+    generic: IMAGE_GEN_API_KEY
+  config_paths:
+    - ".env"
+    - "~/.config/xunyu-hand-drawn-healing-story/config.env"
+  http_api:
+    base_url: null
+    model: null
+
+style_anchor_zh: |
+  竖屏9:16，纯白背景大留白，极简手绘竖屏短视频感（主题不限、题材通用），
+  细且略抖的黑色墨线勾边，蜡笔/水彩稀疏填色且不满涂，能看见白纸底，颗粒质感，
+  低饱和配色（深蓝、浅木棕、浅桃肤色、淡腮红），橙红只作唯一强调色，
+  人物脸是两点眼睛+一小段嘴线+淡腮红圆点，表情克制，
+  居中或偏下构图，顶部留出大块空白给后期叠字，
+  画面内不要长句旁白，最多两字小标签，
+  不要写实、不要3D、不要照片、不要复杂背景、不要大眼睛二次元、不要Q版贴纸
+
+style_anchor_en: |
+  Vertical 9:16 illustration, pure white background, large empty negative space at top for later text overlay,
+  minimalist hand-drawn short-video style (topic-agnostic / general-purpose), thin slightly shaky black ink outlines,
+  sparse crayon and soft watercolor fills that do not fully cover the white paper, textured grainy coloring,
+  muted palette (navy blue, light wood brown, soft peach skin, tiny pink blush), orange-red only as the single accent color,
+  simple face with two dot eyes, a small mouth line, gentle blush cheeks, quiet restrained expression,
+  no long narration burned into the image, at most a 1–2 character Chinese label if needed,
+  no realistic rendering, no 3D, no photo, no complex background, no anime big eyes, no chibi stickers
+
+negative_prompt: |
+  写实照片, 3D, 二次元大眼, Q版贴纸, 渐变光效, 霓虹, 复杂背景装修,
+  满涂不留白, 均匀数字填色, 多格漫画, 英文水印, 长句旁白烧进图,
+  说教标语, 金句海报感, 油腻光影, 过度细节, 手部畸形, 完美矢量线, 商业绘本精致脸
+
+typography:
+  format: rounded_handwritten_print
+  color: "#222222"
+  outline_color: "#FFFFFF"
+  outline_px: 2
+  size_px: 42
+  line_height: 1.7
+  letter_spacing_em: 0.04
+  align: center
+  position: top
+  top_ratio: 0.065
+  max_lines_per_shot: 2
+  max_chars_per_line: 18
+  in_image_label_max_chars: 2
+  font_file: assets/fonts/ZCOOLKuaiLe-Regular.ttf
+  font_candidates:
+    - assets/fonts/RoundedHandwrite.ttf
+    - assets/fonts/ZCOOLKuaiLe-Regular.ttf
+    - "/System/Library/Fonts/Supplemental/Kaiti.ttc"
+    - "/System/Library/Fonts/Supplemental/Songti.ttc"
+
+bgm:
+  mode: none
+  local_path: null
+  volume: 0.10
+  note: "成片默认静音。用户在剪映/视频号/抖音曲库自行配乐。"
+
+narrative_arc: ["身份钩", "压抑/等待", "小反转/小确幸", "可画面化余味"]
+forbid_preachy_ending: true
+no_voiceover: true
+
+output_layout:
+  root: "白色极简手绘/{集号}-{短标题}/"
+  files:
+    storyboard: "{集号}-分镜.md"
+    assets_dir: "{集号}-素材/"
+    preview_dir: "{集号}-预览/"
+    exports_dir: "exports/"
+    config: "config.yaml"
