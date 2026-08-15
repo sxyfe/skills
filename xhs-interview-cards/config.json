@@ -1,0 +1,38 @@
+{
+  "content_root": "~/xhs-interview-cards-output",
+  "canvas": [1080, 1440],
+  "hero_ratio": 0.36,
+  "cooldown_days": 7,
+  "min_images": 5,
+  "max_images": 8,
+  "accounts": {
+    "tech": {
+      "label": "科技号",
+      "lane": "AI / 科技创业者真实访谈拆解"
+    },
+    "women": {
+      "label": "女性号",
+      "lane": "女性成长 / 关系 / 能量真实访谈拆解"
+    }
+  },
+  "skills": {
+    "baoyu_youtube_transcript": "",
+    "video_subtitle_parser": ""
+  },
+  "seed_people": {
+    "tech": [
+      {"name": "黄仁勋", "en": "Jensen Huang"},
+      {"name": "梁文锋", "en": "Liang Wenfeng"},
+      {"name": "姚顺雨", "en": "Shunyu Yao"},
+      {"name": "唐杰", "en": "Jie Tang"},
+      {"name": "杨智麟", "en": "Chi-Ling Yang"},
+      {"name": "Sam Altman", "en": "Sam Altman"},
+      {"name": "Dario Amodei", "en": "Dario Amodei"},
+      {"name": "于东来", "en": "Yu Donglai"}
+    ],
+    "women": [
+      {"name": "The Wizard Liz", "en": "The Wizard Liz"},
+      {"name": "JENNIE", "en": "Jennie Kim"}
+    ]
+  }
+}

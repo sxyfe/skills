@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="wf-title wf-desc">
+  <title id="wf-title">Pipeline</title>
+  <desc id="wf-desc">Five steps: public source, transcript, quote dedupe, one frame, caption strips.</desc>
+  <rect width="1200" height="360" rx="26" fill="#F6F1E8"/>
+  <text x="56" y="52" fill="#8A847C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" letter-spacing="1.8">PIPELINE</text>
+  <text x="56" y="88" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="28" font-weight="700">一场访谈，切成一组可核验笔记</text>
+  <g id="steps" transform="translate(56 126)">
+    <g transform="translate(0 0)">
+      <rect width="196" height="168" rx="18" fill="#111111"/>
+      <text x="22" y="36" fill="#8A847C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">01</text>
+      <text x="22" y="74" fill="#F6F1E8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="20" font-weight="600">公开源</text>
+      <text x="22" y="106" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">YouTube / Bilibili</text>
+      <text x="22" y="128" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">采访稿 / 本地视频</text>
+    </g>
+    <path d="M208 84 H226" stroke="#111111" stroke-width="2"/>
+    <polygon points="226,78 238,84 226,90" fill="#111111"/>
+    <g transform="translate(250 0)">
+      <rect width="196" height="168" rx="18" fill="#111111"/>
+      <text x="22" y="36" fill="#8A847C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">02</text>
+      <text x="22" y="74" fill="#F6F1E8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="20" font-weight="600">抽文稿</text>
+      <text x="22" y="106" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">字幕轨优先</text>
+      <text x="22" y="128" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">没有再 ASR</text>
+    </g>
+    <path d="M458 84 H476" stroke="#111111" stroke-width="2"/>
+    <polygon points="476,78 488,84 476,90" fill="#111111"/>
+    <g transform="translate(500 0)">
+      <rect width="196" height="168" rx="18" fill="#111111"/>
+      <text x="22" y="36" fill="#8A847C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">03</text>
+      <text x="22" y="74" fill="#E8D5A3" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="20" font-weight="600">金句去重</text>
+      <text x="22" y="106" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">跨号也不能复用</text>
+      <text x="22" y="128" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">主题不同可拆篇</text>
+    </g>
+    <path d="M708 84 H726" stroke="#111111" stroke-width="2"/>
+    <polygon points="726,78 738,84 726,90" fill="#111111"/>
+    <g transform="translate(750 0)">
+      <rect width="196" height="168" rx="18" fill="#111111"/>
+      <text x="22" y="36" fill="#8A847C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">04</text>
+      <text x="22" y="74" fill="#F6F1E8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="20" font-weight="600">一帧切条</text>
+      <text x="22" y="106" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">整段只截一帧</text>
+      <text x="22" y="128" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">5-8 张 3:4 字幕条</text>
+    </g>
+  </g>
+</svg>

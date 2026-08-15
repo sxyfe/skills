@@ -8,6 +8,7 @@ Agent Skills 合集，可通过 [skills.sh](https://skills.sh) 安装到 Cursor�
 
 | Skill | 说明 | 依赖 | 安装 |
 | --- | --- | --- | --- |
+| [xhs-interview-cards](xhs-interview-cards/) | 真实公开访谈 → 金句笔记 + 花卷字幕截图条（本地生产，不自动发布） | ffmpeg + yt-dlp + Pillow | `npx skills add sxyfe/skills@xhs-interview-cards -g -y` |
 | [xunyu-hand-drawn-healing-story](xunyu-hand-drawn-healing-story/) | 白色极简手绘竖屏短视频（主题通用）：一句话出片，默认 video-use，另支持 HTML / Remotion / Hyperframes | ffmpeg + Python；生图可选 | `npx skills add sxyfe/skills@xunyu-hand-drawn-healing-story -g -y` |
 | [flight-monitor-agent](flight-monitor-agent/) | 航班实时查价、精简/全量穷举、暖色 HTML 分页报告 | RollingGo-Flight MCP | `npx skills add sxyfe/skills@flight-monitor-agent -g -y` |
 | [hotel-watch-agent](hotel-watch-agent/) | 全球酒店价格监控、A/B 预算、组合触发、cron+Agent 定时告警 | RollingGo-Hotel MCP | `npx skills add sxyfe/skills@hotel-watch-agent -g -y` |
@@ -15,6 +16,9 @@ Agent Skills 合集，可通过 [skills.sh](https://skills.sh) 安装到 Cursor�
 ## 安装
 
 ```bash
+# 人物访谈截图
+npx skills add sxyfe/skills@xhs-interview-cards -g -y
+
 # 手绘竖屏短视频（通用）
 npx skills add sxyfe/skills@xunyu-hand-drawn-healing-story -g -y
 
@@ -25,7 +29,7 @@ npx skills add sxyfe/skills@flight-monitor-agent -g -y
 npx skills add sxyfe/skills@hotel-watch-agent -g -y
 
 # 仅 Cursor
-npx skills add sxyfe/skills@xunyu-hand-drawn-healing-story -g -y -a cursor
+npx skills add sxyfe/skills@xhs-interview-cards -g -y -a cursor
 ```
 
 浏览：https://skills.sh/sxyfe/skills
@@ -38,13 +42,14 @@ Skill 源码均在本仓库根目录。本地调试时，可将目录链接到�
 REPO_ROOT="$(pwd)"
 
 # Cursor
+ln -sfn "$REPO_ROOT/xhs-interview-cards" ~/.cursor/skills/xhs-interview-cards
 ln -sfn "$REPO_ROOT/xunyu-hand-drawn-healing-story" ~/.cursor/skills/xunyu-hand-drawn-healing-story
 ln -sfn "$REPO_ROOT/flight-monitor-agent" ~/.cursor/skills/flight-monitor-agent
 ln -sfn "$REPO_ROOT/hotel-watch-agent" ~/.cursor/skills/hotel-watch-agent
 
 # Claude Code（项目级示例）
 mkdir -p .claude/skills
-ln -sfn "$REPO_ROOT/xunyu-hand-drawn-healing-story" .claude/skills/xunyu-hand-drawn-healing-story
+ln -sfn "$REPO_ROOT/xhs-interview-cards" .claude/skills/xhs-interview-cards
 ```
 
 修改源码后，**新开 Agent 对话**或重启 Agent 以重新加载 `SKILL.md`。
@@ -54,6 +59,12 @@ ln -sfn "$REPO_ROOT/xunyu-hand-drawn-healing-story" .claude/skills/xunyu-hand-dr
 ```
 skills/
 ├── README.md
+├── xhs-interview-cards/              # 人物访谈截图
+│   ├── SKILL.md
+│   ├── README.md
+│   ├── assets/
+│   ├── scripts/
+│   └── references/
 ├── xunyu-hand-drawn-healing-story/   # 白色极简手绘竖屏（通用）
 │   ├── SKILL.md
 │   ├── README.md
@@ -77,6 +88,7 @@ skills/
 ## 要求
 
 - Python 3.8+（多数 Skill）
+- 人物访谈截图：本机 `ffmpeg`、`yt-dlp`、Pillow；中文字体
 - 手绘视频：本机 `ffmpeg`；完整生图需配置可选 API Key
 - 旅行监控：RollingGo API Key
 
