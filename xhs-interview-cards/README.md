@@ -2,7 +2,7 @@
   <img src="./assets/readme/hero.svg" width="100%" alt="人物访谈截图：把真实公开访谈做成金句笔记，并切成花卷式字幕截图条">
 </p>
 
-一套 Agent Skill：从可核验的公开访谈抽出金句，写成笔记正文，再用**同一帧**切成 5–8 张 1080×1440 花卷字幕条。第一版只落到本地，不自动发到任何平台。
+一套 Agent Skill：从可核验的公开访谈抽出金句，写成笔记正文，再按**每句金句对应的视频时段**截不同画面，切成 5–8 张 1080×1440 花卷字幕条。第一版只落到本地，不自动发到任何平台。
 
 适配 Cursor、Claude Code、Codex、OpenClaw、qclaw 等能加载 `SKILL.md` 的 Agent。
 
@@ -13,7 +13,7 @@
 ## 中文
 
 <p align="center">
-  <img src="./assets/readme/workflow.svg" width="100%" alt="流程：公开源、抽文稿、金句去重、一帧切成花卷字幕条">
+  <img src="./assets/readme/workflow.svg" width="100%" alt="流程：公开源、抽文稿、金句去重、按金句时段截不同画面">
 </p>
 
 <p align="center">
@@ -27,7 +27,7 @@
 | 机制 | 做法 |
 | --- | --- |
 | 原话可核验 | 没有公开源就不做这个人；禁止编造名人原话 |
-| 画面真实 | 从访谈视频截一帧，不用 AI 生成假访谈画面 |
+| 画面真实 | 从访谈视频按金句时段截帧，不用 AI 生成假访谈画面；每张主体图尽量不同 |
 | 金句硬去重 | 同一段原话跨号也不能再用 |
 | 冷却 | 同一人在同一号默认 7 天；同场拆篇可同日生产 |
 | 停在边界 | 下载失败就停，不绕过登录、付费墙、加密 |
@@ -101,7 +101,7 @@ python3 scripts/cli.py status
 python3 scripts/cli.py cooldown --account tech --person '梁文锋'
 python3 scripts/cli.py transcript --url 'https://...' --out-dir "$CONTENT_ROOT/_cache/transcripts/id"
 python3 scripts/cli.py check-quotes --quotes quotes.json
-python3 scripts/cli.py compose --frame frame.jpg --cards cards.json --out-dir ./out
+python3 scripts/cli.py compose --video lecture.mp4 --cards cards.json --out-dir ./out
 ```
 
 <p align="center">
@@ -128,7 +128,7 @@ MIT — 见 [LICENSE](LICENSE)
   <img src="./assets/readme/hero.svg" width="100%" alt="xhs-interview-cards turns a real public interview into quote notes and caption-strip images">
 </p>
 
-An agent skill that turns a **verifiable public interview** into a note plus 5–8 caption strips (1080×1440) cut from **one** video frame. It writes to disk only. It does not auto-post.
+An agent skill that turns a **verifiable public interview** into a note plus 5–8 caption strips (1080×1440). Each card is cropped from the **quote’s own timestamp**, not copied from a single frame. It writes to disk only. It does not auto-post.
 
 Install:
 

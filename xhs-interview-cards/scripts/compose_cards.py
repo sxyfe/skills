@@ -139,15 +139,35 @@ def flatten_card(card: dict) -> list[str]:
     return wrapped
 
 
-def compose_from_json(frame_path: Path, cards_path: Path, out_dir: Path, canvas=(1080, 1440), hero_ratio=0.36) -> list[Path]:
-    source = Image.open(frame_path).convert("RGB")
+def load_cards(cards_path: Path) -> list[dict]:
     payload = json.loads(cards_path.read_text(encoding="utf-8"))
     cards = payload.get("cards") if isinstance(payload, dict) else payload
     if not cards:
         raise SystemExit("cards.json 里没有 cards")
+    return cards
+
+
+def compose_from_json(
+    cards_path: Path,
+    out_dir: Path,
+    frame_path: Path | None = None,
+    video_path: Path | None = None,
+    canvas=(1080, 1440),
+    hero_ratio=0.36,
+) -> list[Path]:
+    from extract_frame import extract_distinct_card_images
+
+    cards = load_cards(cards_path)
+    if video_path:
+        sources = extract_distinct_card_images(video_path, cards)
+    elif frame_path:
+        fallback = Image.open(frame_path).convert("RGB")
+        sources = [fallback] * len(cards)
+    else:
+        raise SystemExit("compose 需要 --video（按金句时段截帧）或 --frame（仅兜底）")
     out_dir.mkdir(parents=True, exist_ok=True)
     written: list[Path] = []
-    for i, card in enumerate(cards, start=1):
+    for i, (card, source) in enumerate(zip(cards, sources), start=1):
         lines = flatten_card(card)
         image = compose_card(source, lines, canvas=canvas, hero_ratio=hero_ratio)
         path = out_dir / f"{i:02d}.png"
@@ -159,8 +179,9 @@ def compose_from_json(frame_path: Path, cards_path: Path, out_dir: Path, canvas=
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(description="一帧切成花卷式访谈金句图")
-    parser.add_argument("--frame", required=True)
+    parser = argparse.ArgumentParser(description="按金句时段截不同画面，切成花卷式访谈金句图")
+    parser.add_argument("--video", default=None, help="访谈视频；每张卡按 time 各截一帧")
+    parser.add_argument("--frame", default=None, help="仅当没有视频时的兜底单帧，不推荐")
     parser.add_argument("--cards", required=True)
     parser.add_argument("--out-dir", required=True)
     parser.add_argument("--width", type=int, default=1080)
@@ -168,9 +189,10 @@ if __name__ == "__main__":
     parser.add_argument("--hero-ratio", type=float, default=0.36)
     args = parser.parse_args()
     paths = compose_from_json(
-        Path(args.frame),
         Path(args.cards),
         Path(args.out_dir),
+        frame_path=Path(args.frame) if args.frame else None,
+        video_path=Path(args.video) if args.video else None,
         canvas=(args.width, args.height),
         hero_ratio=args.hero_ratio,
     )

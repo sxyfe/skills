@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="360" viewBox="0 0 1200 360" role="img" aria-labelledby="wf-title wf-desc">
   <title id="wf-title">Pipeline</title>
-  <desc id="wf-desc">Five steps: public source, transcript, quote dedupe, one frame, caption strips.</desc>
+  <desc id="wf-desc">Five steps: public source, transcript, quote dedupe, per-quote frames, caption strips.</desc>
   <rect width="1200" height="360" rx="26" fill="#F6F1E8"/>
   <text x="56" y="52" fill="#8A847C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="13" letter-spacing="1.8">PIPELINE</text>
   <text x="56" y="88" fill="#111111" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="28" font-weight="700">一场访谈，切成一组可核验笔记</text>
@@ -35,9 +35,9 @@
     <g transform="translate(750 0)">
       <rect width="196" height="168" rx="18" fill="#111111"/>
       <text x="22" y="36" fill="#8A847C" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="12">04</text>
-      <text x="22" y="74" fill="#F6F1E8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="20" font-weight="600">一帧切条</text>
-      <text x="22" y="106" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">整段只截一帧</text>
-      <text x="22" y="128" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">5-8 张 3:4 字幕条</text>
+      <text x="22" y="74" fill="#F6F1E8" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="20" font-weight="600">按时截帧</text>
+      <text x="22" y="106" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">每张对齐金句</text>
+      <text x="22" y="128" fill="#C9C2B6" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif" font-size="14">5-8 张不同画面</text>
     </g>
   </g>
 </svg>

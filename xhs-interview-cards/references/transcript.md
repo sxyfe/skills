@@ -17,6 +17,8 @@ python3 {baseDir}/scripts/cli.py transcript --video /path/to.mp4 --out-dir DIR
 
 成功时 stdout 是 JSON，里面有 `transcript` 路径。金句只从该文件出，并保留可回查的原句。
 
+有时间轴时还会写 `transcript-timed.txt`（`[start -> end] 原句`）。写 `cards.json` 时每张卡的 `time` 必须对上对应金句，compose 按这个时间截不同画面。
+
 ## 失败时
 
 - YouTube / B 站没字幕：先停，让用户换一条有字幕的访谈，或补本地视频

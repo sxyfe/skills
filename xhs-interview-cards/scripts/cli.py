@@ -83,12 +83,15 @@ def cmd_frame(args: argparse.Namespace) -> None:
 
 
 def cmd_compose(args: argparse.Namespace) -> None:
+    if not args.video and not args.frame:
+        raise SystemExit("compose 需要 --video（按金句时段截帧）或 --frame（仅兜底）")
     config = cfg()
     canvas = tuple(config.get("canvas") or [1080, 1440])
     paths = compose_from_json(
-        Path(args.frame),
         Path(args.cards),
         Path(args.out_dir),
+        frame_path=Path(args.frame) if args.frame else None,
+        video_path=Path(args.video) if args.video else None,
         canvas=canvas,
         hero_ratio=float(config.get("hero_ratio") or 0.36),
     )
@@ -136,7 +139,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--percent", type=float, default=0.2)
 
     p = sub.add_parser("compose")
-    p.add_argument("--frame", required=True)
+    p.add_argument("--video", default=None, help="访谈视频；每张卡按 cards.json 的 time 各截一帧")
+    p.add_argument("--frame", default=None, help="没有视频时的兜底单帧，不推荐整篇共用")
     p.add_argument("--cards", required=True)
     p.add_argument("--out-dir", required=True)
 

@@ -1,6 +1,6 @@
 ---
 name: xhs-interview-cards
-description: 从真实公开访谈生产小红书人物访谈截图笔记（今日候选、抽金句、写正文、一帧切花卷式字幕条、ledger 去重）。在用户说人物访谈截图、今日候选、访谈金句、花卷截图、做一篇访谈、/xhs-interview-cards 时使用。
+description: 从真实公开访谈生产小红书人物访谈截图笔记（今日候选、抽金句、写正文、按金句时段截不同画面做成花卷式字幕条、ledger 去重）。在用户说人物访谈截图、今日候选、访谈金句、花卷截图、做一篇访谈、/xhs-interview-cards 时使用。
 ---
 
 # 人物访谈截图
@@ -82,7 +82,7 @@ python3 {baseDir}/scripts/cli.py status
    python3 {baseDir}/scripts/cli.py transcript --video '/path/to.mp4' --out-dir {content_root}/_cache/transcripts/{id}
    ```
 
-   读产出的 `transcript.txt`。内部路由见 `{baseDir}/references/transcript.md`。没有文稿就停，不要凭印象写金句。
+   读产出的 `transcript.txt`，有 `transcript-timed.txt` 时一并读（给每张卡对时间）。内部路由见 `{baseDir}/references/transcript.md`。没有文稿就停，不要凭印象写金句。
 3. 读 `{baseDir}/references/split-articles.md`。先按主题切篇，再写单篇。
    - 一场访谈只支撑一个主题 → 1 篇
    - 金句多、主题明显不同（例如管理 / 人生 / 金钱）→ 拆成 2～3 篇，每篇一个主题、4～6 个分点
@@ -94,14 +94,19 @@ python3 {baseDir}/scripts/cli.py status
 6. 视频：本地文件优先。只有公开链接且没有本地文件时才  
    `cli.py fetch-video --url URL --out {content_root}/_cache/videos/{id}.mp4`  
    失败就停，让用户补文件
-7. 整段视频只截一帧（默认 20% 处，用户可指定时间）：  
-   `cli.py extract-frame --video ... --out .../frame.jpg`  
-   同场拆出的多篇共用这一帧，不要每篇另截
-8. 每一篇 `cli.py prepare-dir --account --date --person --title`
-9. 把该篇切片写成 `cards.json`（`{"cards":[{"header":"...","lines":["..."]}]}`），然后  
-   `cli.py compose --frame frame.jpg --cards cards.json --out-dir {成品目录}`
-10. 把 `文稿.md` 放进该篇成品目录
-11. 每一篇立刻 `record`；同场拆篇时 `entry.json` 加 `"same_interview_split": true`，跳过人物冷却，金句去重仍然生效
+7. 每一篇 `cli.py prepare-dir --account --date --person --title`
+8. 把该篇切片写成 `cards.json`。每张卡必须带 `time`（秒或 `00:01:12`），对准这张卡主金句在 `transcript-timed.txt` 里出现的段落。禁止 5～8 张共用同一帧当主体图。
+   ```json
+   {"cards":[{"header":"...","time":"03:21","lines":["..."]}]}
+   ```
+   然后用视频按卡截帧（不要先截一张再复用）：
+   ```bash
+   python3 {baseDir}/scripts/cli.py compose --video {视频} --cards cards.json --out-dir {成品目录}
+   ```
+   compose 会按 `time` 各截一帧；时间过近或画面过像时自动错开。同场拆篇也各自对金句时间，不要共用一张兜底图。
+   只有没有视频、也没有时间轴时，才允许 `--frame` 单帧兜底。
+9. 把 `文稿.md` 放进该篇成品目录
+10. 每一篇立刻 `record`；同场拆篇时 `entry.json` 加 `"same_interview_split": true`，跳过人物冷却，金句去重仍然生效
 
 ## record
 

@@ -36,24 +36,66 @@ def write_text(path: Path, text: str) -> Path:
     return path
 
 
-def srt_or_vtt_to_text(path: Path) -> str:
-    lines: list[str] = []
-    skip_next_time = False
+def parse_clock(value: str) -> float:
+    text = value.strip().replace(",", ".")
+    parts = text.split(":")
+    if len(parts) == 3:
+        return int(parts[0]) * 3600 + int(parts[1]) * 60 + float(parts[2])
+    if len(parts) == 2:
+        return int(parts[0]) * 60 + float(parts[1])
+    return float(parts[0])
+
+
+def srt_or_vtt_to_segments(path: Path) -> list[tuple[float, float, str]]:
+    segments: list[tuple[float, float, str]] = []
+    start = end = None
+    buf: list[str] = []
+
+    def flush() -> None:
+        nonlocal start, end, buf
+        text = re.sub(r"<[^>]+>", "", " ".join(buf)).strip()
+        if start is not None and end is not None and text:
+            if not segments or segments[-1][2] != text:
+                segments.append((start, end, text))
+        start = end = None
+        buf = []
+
     for raw in path.read_text(encoding="utf-8", errors="ignore").splitlines():
         line = raw.strip()
         if not line or line.startswith("WEBVTT") or line.startswith("NOTE"):
+            if not line:
+                flush()
             continue
         if re.fullmatch(r"\d+", line):
             continue
         if "-->" in line:
-            skip_next_time = True
+            flush()
+            left, right = line.split("-->", 1)
+            right = right.split(" ")[0]
+            try:
+                start = parse_clock(left)
+                end = parse_clock(right)
+            except ValueError:
+                start = end = None
             continue
-        if skip_next_time:
-            skip_next_time = False
-        line = re.sub(r"<[^>]+>", "", line)
-        if line and (not lines or lines[-1] != line):
-            lines.append(line)
-    return "\n".join(lines)
+        buf.append(line)
+    flush()
+    return segments
+
+
+def srt_or_vtt_to_text(path: Path) -> str:
+    return "\n".join(text for _, _, text in srt_or_vtt_to_segments(path))
+
+
+def timed_text(segments: list[tuple[float, float, str]]) -> str:
+    return "\n".join(f"[{start:7.2f} -> {end:7.2f}] {text}" for start, end, text in segments)
+
+
+def write_transcript_pair(out_dir: Path, plain: str, timed: str | None = None) -> Path:
+    dest = write_text(out_dir / "transcript.txt", plain)
+    if timed:
+        write_text(out_dir / "transcript-timed.txt", timed)
+    return dest
 
 
 def find_first(out_dir: Path, names: list[str]) -> Path | None:
@@ -90,7 +132,7 @@ def transcript_from_youtube(url: str, out_dir: Path, baoyu_dir: Path) -> dict[st
     md = find_first(out_dir, ["transcript.md"])
     if not md:
         raise SystemExit("baoyu-youtube-transcript 跑完了，但没有 transcript.md")
-    dest = write_text(out_dir / "transcript.txt", md.read_text(encoding="utf-8"))
+    dest = write_transcript_pair(out_dir, md.read_text(encoding="utf-8"))
     return {"source": "baoyu-youtube-transcript", "transcript": str(dest), "raw": str(md)}
 
 
@@ -123,7 +165,8 @@ def transcript_from_ytdlp_subs(url: str, out_dir: Path) -> dict[str, str]:
         raise SystemExit("这条视频没有可下载的字幕轨")
     preferred = [p for p in vtts if ".zh" in p.name.lower()] or vtts
     raw = preferred[0]
-    dest = write_text(out_dir / "transcript.txt", srt_or_vtt_to_text(raw))
+    segs = srt_or_vtt_to_segments(raw)
+    dest = write_transcript_pair(out_dir, "\n".join(t for _, _, t in segs), timed_text(segs))
     return {"source": "yt-dlp-subs", "transcript": str(dest), "raw": str(raw)}
 
 
@@ -151,7 +194,10 @@ def transcript_from_parser(url: str, out_dir: Path, parser_dir: Path, skip_asr: 
     clean = hits[0] if hits else find_first(out_dir, ["*_transcript_turbo_clean.txt"])
     if not clean:
         raise SystemExit("video-subtitle-parser 没有产出 *_transcript_turbo_clean.txt（多半没有字幕，且 ASR 未启用）")
-    dest = write_text(out_dir / "transcript.txt", clean.read_text(encoding="utf-8"))
+    dest = write_transcript_pair(out_dir, clean.read_text(encoding="utf-8"))
+    timed_src = find_first(out_dir, ["*_segments_clean.md", "*.vtt", "*.srt"])
+    if timed_src and timed_src.suffix.lower() in {".vtt", ".srt"}:
+        write_text(out_dir / "transcript-timed.txt", timed_text(srt_or_vtt_to_segments(timed_src)))
     return {
         "source": "video-subtitle-parser",
         "transcript": str(dest),
@@ -191,7 +237,8 @@ def transcript_from_local(video: Path, out_dir: Path) -> dict[str, str]:
     out_dir.mkdir(parents=True, exist_ok=True)
     embedded = extract_embedded_subs(video, out_dir)
     if embedded:
-        dest = write_text(out_dir / "transcript.txt", srt_or_vtt_to_text(embedded))
+        segs = srt_or_vtt_to_segments(embedded)
+        dest = write_transcript_pair(out_dir, "\n".join(t for _, _, t in segs), timed_text(segs))
         return {"source": "ffmpeg-embedded-subs", "transcript": str(dest), "raw": str(embedded)}
 
     try:
@@ -230,7 +277,12 @@ def transcript_from_local(video: Path, out_dir: Path) -> dict[str, str]:
         )
     if not text:
         raise SystemExit("mlx-whisper 没有转写出文本")
-    dest = write_text(out_dir / "transcript.txt", text)
+    timed_lines = []
+    for seg in result.get("segments") or []:
+        piece = (seg.get("text") or "").strip()
+        if piece:
+            timed_lines.append(f"[{float(seg.get('start') or 0):7.2f} -> {float(seg.get('end') or 0):7.2f}] {piece}")
+    dest = write_transcript_pair(out_dir, text, "\n".join(timed_lines) if timed_lines else None)
     return {"source": "mlx-whisper", "transcript": str(dest), "raw": str(audio)}
 
 
