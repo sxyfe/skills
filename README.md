@@ -8,6 +8,11 @@ Agent Skills 合集，可通过 [skills.sh](https://skills.sh) 安装到 Cursor�
 
 | Skill | 说明 | 依赖 | 安装 |
 | --- | --- | --- | --- |
+| [ai-host-tutorial](ai-host-tutorial/) | AI 口播教程主编排：五轨交接（口播 / 真录屏 / 空镜 / 贴图 / 字幕），15 秒预览门禁，只出剪映时间轴 | Python 3；口播轨可选 MiniMax+HeyGen | `npx skills add sxyfe/skills@ai-host-tutorial -g -y` |
+| [tutorial-storyboard](tutorial-storyboard/) | 口播稿 → `timeline.json` 五轨分镜 | 无 | `npx skills add sxyfe/skills@tutorial-storyboard -g -y` |
+| [tutorial-screen-capture](tutorial-screen-capture/) | 按分镜出录屏清单，等人放入真实截图/录像 | 无 | `npx skills add sxyfe/skills@tutorial-screen-capture -g -y` |
+| [ai-broll-lock](ai-broll-lock/) | 一张定妆图出 4–8 秒空镜，锁角色与场景 | 图生视频 API（用户自备） | `npx skills add sxyfe/skills@ai-broll-lock -g -y` |
+| [tutorial-composite](tutorial-composite/) | 各轨素材 → 剪映/CapCut 图层时间轴清单 | 无 | `npx skills add sxyfe/skills@tutorial-composite -g -y` |
 | [xhs-interview-cards](xhs-interview-cards/) | 真实公开访谈 → 金句笔记 + 花卷字幕截图条（本地生产，不自动发布） | ffmpeg + yt-dlp + Pillow | `npx skills add sxyfe/skills@xhs-interview-cards -g -y` |
 | [xunyu-hand-drawn-healing-story](xunyu-hand-drawn-healing-story/) | 白色极简手绘竖屏短视频（主题通用）：一句话出片，默认 video-use，另支持 HTML / Remotion / Hyperframes | ffmpeg + Python；生图可选 | `npx skills add sxyfe/skills@xunyu-hand-drawn-healing-story -g -y` |
 | [flight-monitor-agent](flight-monitor-agent/) | 航班实时查价、精简/全量穷举、暖色 HTML 分页报告 | RollingGo-Flight MCP | `npx skills add sxyfe/skills@flight-monitor-agent -g -y` |
@@ -16,6 +21,13 @@ Agent Skills 合集，可通过 [skills.sh](https://skills.sh) 安装到 Cursor�
 ## 安装
 
 ```bash
+# AI 口播教程五轨（建议五条一起装）
+npx skills add sxyfe/skills@ai-host-tutorial -g -y
+npx skills add sxyfe/skills@tutorial-storyboard -g -y
+npx skills add sxyfe/skills@tutorial-screen-capture -g -y
+npx skills add sxyfe/skills@ai-broll-lock -g -y
+npx skills add sxyfe/skills@tutorial-composite -g -y
+
 # 人物访谈截图
 npx skills add sxyfe/skills@xhs-interview-cards -g -y
 
@@ -42,6 +54,11 @@ Skill 源码均在本仓库根目录。本地调试时，可将目录链接到�
 REPO_ROOT="$(pwd)"
 
 # Cursor
+ln -sfn "$REPO_ROOT/ai-host-tutorial" ~/.cursor/skills/ai-host-tutorial
+ln -sfn "$REPO_ROOT/tutorial-storyboard" ~/.cursor/skills/tutorial-storyboard
+ln -sfn "$REPO_ROOT/tutorial-screen-capture" ~/.cursor/skills/tutorial-screen-capture
+ln -sfn "$REPO_ROOT/ai-broll-lock" ~/.cursor/skills/ai-broll-lock
+ln -sfn "$REPO_ROOT/tutorial-composite" ~/.cursor/skills/tutorial-composite
 ln -sfn "$REPO_ROOT/xhs-interview-cards" ~/.cursor/skills/xhs-interview-cards
 ln -sfn "$REPO_ROOT/xunyu-hand-drawn-healing-story" ~/.cursor/skills/xunyu-hand-drawn-healing-story
 ln -sfn "$REPO_ROOT/flight-monitor-agent" ~/.cursor/skills/flight-monitor-agent
@@ -59,6 +76,11 @@ ln -sfn "$REPO_ROOT/xhs-interview-cards" .claude/skills/xhs-interview-cards
 ```
 skills/
 ├── README.md
+├── ai-host-tutorial/                 # 口播教程主编排
+├── tutorial-storyboard/
+├── tutorial-screen-capture/
+├── ai-broll-lock/
+├── tutorial-composite/
 ├── xhs-interview-cards/              # 人物访谈截图
 │   ├── SKILL.md
 │   ├── README.md
@@ -88,6 +110,7 @@ skills/
 ## 要求
 
 - Python 3.8+（多数 Skill）
+- 口播教程五轨：主编排用 Python 初始化 state；真录屏由用户提供；口播/空镜 API 自备账号。禁止用模型生成可读 IDE
 - 人物访谈截图：本机 `ffmpeg`、`yt-dlp`、Pillow；中文字体
 - 手绘视频：本机 `ffmpeg`；完整生图需配置可选 API Key
 - 旅行监控：RollingGo API Key
